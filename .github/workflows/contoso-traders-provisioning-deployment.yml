@@ -302,9 +302,12 @@ jobs:
                 # Upload the file to the blob container
                 Set-AzStorageBlobContent -File $file.FullName -Container '$web' -Blob $destinationBlob -Context $context
             }
-          azPSVersion: "latest"
+            # Define parameters
+            $cdnEndpointName = "${{ env.UI_CDN_ENDPOINT_NAME }}${{ secrets.ENVIRONMENT }}"
+            $resourceGroupName = "${{ env.RESOURCE_GROUP_NAME }}${{ secrets.ENVIRONMENT }}"
+            $cdnProfileName = "${{ env.CDN_PROFILE_NAME }}${{ secrets.ENVIRONMENT }}"
+            
+            # Purge CDN endpoint content
+            Clear-AzCdnEndpointContent -ProfileName $cdnProfileName -ResourceGroupName $resourceGroupName -EndpointName $cdnEndpointName -ContentPath '/*' -NoWait $true
 
-      - name: purge CDN endpoint
-        uses: azure/CLI@v1
-        with:
-          inlineScript: az cdn endpoint purge --no-wait --content-paths '/*' -n '${{ env.UI_CDN_ENDPOINT_NAME }}${{ secrets.ENVIRONMENT }}' -g '${{ env.RESOURCE_GROUP_NAME }}${{ secrets.ENVIRONMENT }}' --profile-name '${{ env.CDN_PROFILE_NAME }}${{ secrets.ENVIRONMENT }}'
+          azPSVersion: "latest"
