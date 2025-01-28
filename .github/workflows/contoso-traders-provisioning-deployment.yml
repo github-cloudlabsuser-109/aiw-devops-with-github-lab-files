@@ -308,7 +308,7 @@ jobs:
             $cdnProfileName = "${{ env.CDN_PROFILE_NAME }}${{ secrets.ENVIRONMENT }}"
             
             # Purge CDN endpoint content
-            Clear-AzCdnEndpointContent -ProfileName $cdnProfileName -ResourceGroupName $resourceGroupName -EndpointName $cdnEndpointName -ContentPath '/*' -NoWait $true
+            Clear-AzCdnEndpointContent -ProfileName $cdnProfileName -ResourceGroupName $resourceGroupName -EndpointName $cdnEndpointName -ContentPath '/*' 
 
           azPSVersion: "latest"
           working-directory: src/ContosoTraders.Ui.Website
