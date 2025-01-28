@@ -300,7 +300,7 @@ jobs:
                 Write-Host "Uploading $file to $containerName/$destinationBlob"
                 
                 # Upload the file to the blob container
-                Set-AzStorageBlobContent -File $file.FullName -Container $containerName -Blob $destinationBlob -Context $context
+                Set-AzStorageBlobContent -File $file.FullName -Container '$web' -Blob $destinationBlob -Context $context
             }
           azPSVersion: "latest"
 
