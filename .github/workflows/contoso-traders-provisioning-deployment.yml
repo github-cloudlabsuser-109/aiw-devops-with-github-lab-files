@@ -270,9 +270,9 @@ jobs:
       - name: npm install
         run: npm install --legacy-peer-deps         
         working-directory: src/ContosoTraders.Ui.Website
-      - name: npm run build
-        run: npm run build
-        working-directory: src/ContosoTraders.Ui.Website
+      # - name: npm run build
+      #   run: npm run build
+      #   working-directory: src/ContosoTraders.Ui.Website
       - name: deploy to storage
         uses: azure/CLI@v2
         with:
@@ -281,10 +281,10 @@ jobs:
             # Download and install azcopy
             wget -O azcopy_v10.tar.gz https://aka.ms/downloadazcopy-v10-linux
             tar -xf azcopy_v10.tar.gz --strip-components=1
-            sudo mv ./azcopy /usr/local/bin/azcopy
+            mv ./azcopy /usr/bin/azcopy  # No need for sudo in GitHub Actions
 
-            # Sync files to Azure Storage
-            az storage blob sync --account-name '${{ env.UI_STORAGE_ACCOUNT_NAME }}${{ secrets.ENVIRONMENT }}' -c '$web' -s 'src/ContosoTraders.Ui.Website/build' --account-key 'lA0jSEwruqGP8or+uCwC67B/NWG9LMIwF+xHC/mFFyQJ5SJg1PUSXp7rptIOTkCbe5o/ePinXHxt+ASt8trLNg=='
+            # Sync files to Azure Storage using azcopy
+            azcopy sync 'src/ContosoTraders.Ui.Website/build' "https://${{ env.UI_STORAGE_ACCOUNT_NAME }}${{ secrets.ENVIRONMENT }}.blob.core.windows.net/\$web" --account-key 'lA0jSEwruqGP8or+uCwC67B/NWG9LMIwF+xHC/mFFyQJ5SJg1PUSXp7rptIOTkCbe5o/ePinXHxt+ASt8trLNg=='
       - name: purge CDN endpoint
         uses: azure/CLI@v2
         with:
