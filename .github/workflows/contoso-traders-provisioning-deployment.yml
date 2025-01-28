@@ -273,15 +273,15 @@ jobs:
       # - name: npm run build
       #   run: npm run build
       #   working-directory: src/ContosoTraders.Ui.Website
-      - name: deploy to storage
-        uses: azure/CLI@v2
-        with:
-          azcliversion: 2.30.0
-          inlineScript: |
-            curl -sL https://aka.ms/downloadazcopy-v10-linux | tar xz -C /usr/bin
+      # - name: deploy to storage
+      #   uses: azure/CLI@v2
+      #   with:
+      #     azcliversion: 2.30.0
+      #     inlineScript: |
+      #       curl -sL https://aka.ms/downloadazcopy-v10-linux | tar xz -C /usr/bin
 
-             # Sync files to Azure Storage using azcopy
-            azcopy sync 'src/ContosoTraders.Ui.Website/build' "https://${{ env.UI_STORAGE_ACCOUNT_NAME }}${{ secrets.ENVIRONMENT }}.blob.core.windows.net/\$web" --account-key 'lA0jSEwruqGP8or+uCwC67B/NWG9LMIwF+xHC/mFFyQJ5SJg1PUSXp7rptIOTkCbe5o/ePinXHxt+ASt8trLNg=='      
+      #        # Sync files to Azure Storage using azcopy
+      #       azcopy sync 'src/ContosoTraders.Ui.Website/build' "https://${{ env.UI_STORAGE_ACCOUNT_NAME }}${{ secrets.ENVIRONMENT }}.blob.core.windows.net/\$web" --account-key 'lA0jSEwruqGP8or+uCwC67B/NWG9LMIwF+xHC/mFFyQJ5SJg1PUSXp7rptIOTkCbe5o/ePinXHxt+ASt8trLNg=='      
    
       - name: purge CDN endpoint
         uses: azure/CLI@v2
