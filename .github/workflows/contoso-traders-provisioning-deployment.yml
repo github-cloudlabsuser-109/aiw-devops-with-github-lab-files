@@ -281,7 +281,6 @@ jobs:
       - name: deploy to storage
         uses: azure/powershell@v2
         with:
-          pwsh: true
           inlineScript: |
             # Define parameters
             $storageAccountName = "${{ env.UI_STORAGE_ACCOUNT_NAME }}${{ secrets.ENVIRONMENT }}"
@@ -303,6 +302,7 @@ jobs:
                 # Upload the file to the blob container
                 Set-AzStorageBlobContent -File $file.FullName -Container $containerName -Blob $destinationBlob -Context $context
             }
+          azPSVersion: "latest"
 
       - name: purge CDN endpoint
         uses: azure/CLI@v1
