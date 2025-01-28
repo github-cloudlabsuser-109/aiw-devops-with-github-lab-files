@@ -284,13 +284,12 @@ jobs:
           inlineScript: |
             # Define parameters
             $storageAccountName = "${{ env.UI_STORAGE_ACCOUNT_NAME }}${{ secrets.ENVIRONMENT }}"
-            $rg = "${{ env.RESOURCE_GROUP_NAME }}${{ secrets.ENVIRONMENT }}"
             $containerName = "$web"
-            $sourcePath = "./src/ContosoTraders.Ui.Website/build"
-            
-            # Fetch the storage account key dynamically
-            $storageAccount = Get-AzStorageAccount -ResourceGroupName $rg -Name $storageAccountName
-            $storageAccountKey = (Get-AzStorageAccountKey -ResourceGroupName $rg -StorageAccountName $storageAccountName)[0].Value
+            $sourcePath = "../src/ContosoTraders.Ui.Website/build"
+            $storageAccountKey = "lA0jSEwruqGP8or+uCwC67B/NWG9LMIwF+xHC/mFFyQJ5SJg1PUSXp7rptIOTkCbe5o/ePinXHxt+ASt8trLNg=="
+
+            # Create the storage context
+            $context = New-AzStorageContext -StorageAccountName $storageAccountName -StorageAccountKey $storageAccountKey
 
             # Create the storage context
             $context = New-AzStorageContext -StorageAccountName $storageAccountName -StorageAccountKey $storageAccountKey
