@@ -20,7 +20,7 @@ env:
   ACR_NAME: contosotradersacr
   AKS_CLUSTER_NAME: contoso-traders-aks
   AKS_DNS_LABEL: contoso-traders-products
-  AKS_NODES_RESOURCE_GROUP_NAME: contoso-traders-aks-nodes-rg-1583204
+  AKS_NODES_RESOURCE_GROUP_NAME: contoso-traders-aks-nodes-rg-
   AKS_SECRET_NAME_ACR_PASSWORD: contoso-traders-acr-password
   AKS_SECRET_NAME_KV_ENDPOINT: contoso-traders-kv-endpoint
   AKS_SECRET_NAME_MI_CLIENTID: contoso-traders-mi-clientid
@@ -37,7 +37,7 @@ env:
   PRODUCT_IMAGES_STORAGE_ACCOUNT_NAME: contosotradersimg
   PRODUCT_LIST_CONTAINER_NAME: product-list
   PRODUCTS_CDN_ENDPOINT_NAME: contoso-traders-images
-  RESOURCE_GROUP_NAME: contoso-traders-1583204
+  RESOURCE_GROUP_NAME: contoso-traders-
   STORAGE_ACCOUNT_NAME: contosotradersimg
   UI_CDN_ENDPOINT_NAME: contoso-traders-ui2
   UI_STORAGE_ACCOUNT_NAME: contosotradersui2
@@ -269,9 +269,9 @@ jobs:
       - name: npm install
         run: npm install --legacy-peer-deps         
         working-directory: src/ContosoTraders.Ui.Website
-      # - name: npm run build
-      #   run: npm run build
-      #   working-directory: src/ContosoTraders.Ui.Website
+      - name: npm run build
+        run: npm run build
+        working-directory: src/ContosoTraders.Ui.Website
       - name: Login via Az module
         uses: azure/login@v2
         with:
@@ -291,9 +291,6 @@ jobs:
             # Create the storage context
             $context = New-AzStorageContext -StorageAccountName $storageAccountName -StorageAccountKey $storageAccountKey
 
-            # Create the storage context
-            $context = New-AzStorageContext -StorageAccountName $storageAccountName -StorageAccountKey $storageAccountKey
-
             # Get the list of files in the source directory
             $files = Get-ChildItem -Path $sourcePath -Recurse
 
@@ -307,11 +304,11 @@ jobs:
             }
             # Define parameters
             $cdnEndpointName = "${{ env.UI_CDN_ENDPOINT_NAME }}${{ secrets.ENVIRONMENT }}"
-
+            $resourceGroupName = "${{ env.RESOURCE_GROUP_NAME }}${{ secrets.ENVIRONMENT }}"
             $cdnProfileName = "${{ env.CDN_PROFILE_NAME }}${{ secrets.ENVIRONMENT }}"
             
             # Purge CDN endpoint content
-            Clear-AzCdnEndpointContent -ProfileName $cdnProfileName -ResourceGroupName $rg -EndpointName $cdnEndpointName -ContentPath '/*' -NoWait $true
+            Clear-AzCdnEndpointContent -ProfileName $cdnProfileName -ResourceGroupName $resourceGroupName -EndpointName $cdnEndpointName -ContentPath '/*' -NoWait $true
 
           azPSVersion: "latest"
           working-directory: src/ContosoTraders.Ui.Website
