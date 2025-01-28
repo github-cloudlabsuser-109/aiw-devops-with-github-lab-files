@@ -285,8 +285,11 @@ jobs:
             # Define parameters
             $storageAccountName = "${{ env.UI_STORAGE_ACCOUNT_NAME }}${{ secrets.ENVIRONMENT }}"
             $containerName = "$web"
-            $sourcePath = "../src/ContosoTraders.Ui.Website/build"
-            $storageAccountKey = "lA0jSEwruqGP8or+uCwC67B/NWG9LMIwF+xHC/mFFyQJ5SJg1PUSXp7rptIOTkCbe5o/ePinXHxt+ASt8trLNg=="
+            $sourcePath = "./src/ContosoTraders.Ui.Website/build"
+            
+            # Fetch the storage account key dynamically
+            $storageAccount = Get-AzStorageAccount -ResourceGroupName "${{ env.RESOURCE_GROUP_NAME }}" -Name $storageAccountName
+            $storageAccountKey = (Get-AzStorageAccountKey -ResourceGroupName "${{ env.RESOURCE_GROUP_NAME }}" -StorageAccountName $storageAccountName)[0].Value
 
             # Create the storage context
             $context = New-AzStorageContext -StorageAccountName $storageAccountName -StorageAccountKey $storageAccountKey
