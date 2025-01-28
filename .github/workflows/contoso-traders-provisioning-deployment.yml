@@ -285,7 +285,7 @@ jobs:
             # Define parameters
             $storageAccountName = "${{ env.UI_STORAGE_ACCOUNT_NAME }}${{ secrets.ENVIRONMENT }}"
             $containerName = "$web"
-            $sourcePath = "src/ContosoTraders.Ui.Website/build"
+            $sourcePath = "../src/ContosoTraders.Ui.Website/build"
             $storageAccountKey = "lA0jSEwruqGP8or+uCwC67B/NWG9LMIwF+xHC/mFFyQJ5SJg1PUSXp7rptIOTkCbe5o/ePinXHxt+ASt8trLNg=="
 
             # Create the storage context
@@ -311,3 +311,4 @@ jobs:
             Clear-AzCdnEndpointContent -ProfileName $cdnProfileName -ResourceGroupName $resourceGroupName -EndpointName $cdnEndpointName -ContentPath '/*' -NoWait $true
 
           azPSVersion: "latest"
+          working-directory: src/ContosoTraders.Ui.Website
