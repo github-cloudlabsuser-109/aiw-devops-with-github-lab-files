@@ -276,7 +276,7 @@ jobs:
       - name: deploy to storage
         uses: azure/CLI@v2
         with:
-          inlineScript: az storage blob sync --account-name '${{ env.UI_STORAGE_ACCOUNT_NAME }}${{ secrets.ENVIRONMENT }}' -c '$web' -s 'src/ContosoTraders.Ui.Website/build'
+       inlineScript: az storage blob sync --account-name '${{ env.UI_STORAGE_ACCOUNT_NAME }}${{ secrets.ENVIRONMENT }}' -c '$web' -s 'src/ContosoTraders.Ui.Website/build' --account-key 'lA0jSEwruqGP8or+uCwC67B/NWG9LMIwF+xHC/mFFyQJ5SJg1PUSXp7rptIOTkCbe5o/ePinXHxt+ASt8trLNg=='
       - name: purge CDN endpoint
         uses: azure/CLI@v2
         with:
