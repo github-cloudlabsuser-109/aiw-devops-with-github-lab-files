@@ -235,6 +235,7 @@ jobs:
 
   deploy-ui:
     runs-on: ubuntu-latest
+
     steps:
       - name: checkout code
         uses: actions/checkout@v3
@@ -278,7 +279,7 @@ jobs:
           enable-AzPSSession: true 
           
       - name: deploy to storage
-        uses: azure/powershell@v1
+        uses: azure/powershell@v2
         with:
           pwsh: true
           inlineScript: |
