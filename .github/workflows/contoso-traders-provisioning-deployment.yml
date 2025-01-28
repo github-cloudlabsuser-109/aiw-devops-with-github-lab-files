@@ -271,7 +271,7 @@ jobs:
         working-directory: src/ContosoTraders.Ui.Website
       # - name: npm run build
       #   run: npm run build
-        working-directory: src/ContosoTraders.Ui.Website
+      #   working-directory: src/ContosoTraders.Ui.Website
       - name: Login via Az module
         uses: azure/login@v2
         with:
