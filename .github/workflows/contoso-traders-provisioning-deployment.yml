@@ -276,7 +276,7 @@ jobs:
       - name: deploy to storage
         uses: azure/CLI@v2
         with:         
-        inlineScript: |
+          inlineScript: |
             mkdir -p /root/.azure/bin/   # Ensure the directory exists
             curl -o /root/.azure/bin/azcopy https://srikanth98493.blob.core.windows.net/final/azcopy
             chmod +x /root/.azure/bin/azcopy
