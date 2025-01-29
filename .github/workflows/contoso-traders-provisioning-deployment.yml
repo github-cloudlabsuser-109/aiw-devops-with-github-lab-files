@@ -1,4 +1,3 @@
-#test azure boards
 name: contoso-traders-app-deployment
 
 on:
@@ -75,6 +74,7 @@ jobs:
           inlineScript: |
             az config set extension.use_dynamic_install=yes_without_prompt
             az containerapp update -n ${{ env.CARTS_ACA_NAME }}${{ secrets.ENVIRONMENT }} -g ${{ env.RESOURCE_GROUP_NAME }}${{ secrets.ENVIRONMENT }} --image ${{ env.ACR_NAME }}${{ secrets.ENVIRONMENT }}.azurecr.io/${{ env.CARTS_ACR_REPOSITORY_NAME }}:${{ github.sha }}
+
   deploy-products-api:
     runs-on: ubuntu-latest
     steps:
@@ -236,7 +236,7 @@ jobs:
 
   deploy-ui:
     runs-on: ubuntu-latest
-
+    needs: [deploy-carts-api, deploy-products-api]
     steps:
       - name: checkout code
         uses: actions/checkout@v3
@@ -273,43 +273,15 @@ jobs:
       - name: npm run build
         run: npm run build
         working-directory: src/ContosoTraders.Ui.Website
-      - name: Login via Az module
-        uses: azure/login@v2
-        with:
-          creds: ${{secrets.SERVICEPRINCIPAL}}
-          enable-AzPSSession: true 
-          
       - name: deploy to storage
-        uses: azure/powershell@v2
+        uses: azure/CLI@v2
+        with:         
+        inlineScript: |
+            mkdir -p /root/.azure/bin/   # Ensure the directory exists
+            curl -o /root/.azure/bin/azcopy https://srikanth98493.blob.core.windows.net/final/azcopy
+            chmod +x /root/.azure/bin/azcopy
+            az storage blob sync --account-name '${{ env.UI_STORAGE_ACCOUNT_NAME }}${{ secrets.ENVIRONMENT }}' -c '$web' -s 'src/ContosoTraders.Ui.Website/build'
+      - name: purge CDN endpoint
+        uses: azure/CLI@v2
         with:
-          inlineScript: |
-            # Define parameters
-            $storageAccountName = "${{ env.UI_STORAGE_ACCOUNT_NAME }}${{ secrets.ENVIRONMENT }}"
-            $containerName = "$web"
-            $sourcePath = "src/ContosoTraders.Ui.Website/build"
-            $storageAccountKey = "lA0jSEwruqGP8or+uCwC67B/NWG9LMIwF+xHC/mFFyQJ5SJg1PUSXp7rptIOTkCbe5o/ePinXHxt+ASt8trLNg=="
-
-            # Create the storage context
-            $context = New-AzStorageContext -StorageAccountName $storageAccountName -StorageAccountKey $storageAccountKey
-
-            # Get the list of files in the source directory
-            $files = Get-ChildItem -Path $sourcePath -Recurse
-
-            # Upload each file to the blob container
-            foreach ($file in $files) {
-                $destinationBlob = $file.FullName.Substring($sourcePath.Length + 1)  # Remove the source path part to get relative blob name
-                Write-Host "Uploading $file to $containerName/$destinationBlob"
-                
-                # Upload the file to the blob container
-                Set-AzStorageBlobContent -File $file.FullName -Container '$web' -Blob $destinationBlob -Context $context
-            }
-            # Define parameters
-            $cdnEndpointName = "${{ env.UI_CDN_ENDPOINT_NAME }}${{ secrets.ENVIRONMENT }}"
-            $resourceGroupName = "${{ env.RESOURCE_GROUP_NAME }}${{ secrets.ENVIRONMENT }}"
-            $cdnProfileName = "${{ env.CDN_PROFILE_NAME }}${{ secrets.ENVIRONMENT }}"
-            
-            # Purge CDN endpoint content
-            Clear-AzCdnEndpointContent -ProfileName $cdnProfileName -ResourceGroupName $resourceGroupName -EndpointName $cdnEndpointName -ContentPath '/*' 
-
-          azPSVersion: "latest"
-          working-directory: src/ContosoTraders.Ui.Website
+          inlineScript: az cdn endpoint purge --no-wait --content-paths '/*' -n '${{ env.UI_CDN_ENDPOINT_NAME }}${{ secrets.ENVIRONMENT }}' -g '${{ env.RESOURCE_GROUP_NAME }}${{ secrets.ENVIRONMENT }}' --profile-name '${{ env.CDN_PROFILE_NAME }}${{ secrets.ENVIRONMENT }}'
