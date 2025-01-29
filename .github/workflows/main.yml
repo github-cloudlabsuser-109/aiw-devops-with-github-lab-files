@@ -1,4 +1,4 @@
-name: contoso-traders-app-deployment
+name: azcopy
 
 on:
   workflow_dispatch:
@@ -58,7 +58,7 @@ jobs:
         id: zcopy
         with:
           inlineScript: |
+            mkdir -p /root/.azure/bin/   # Ensure the directory exists
             curl -o /root/.azure/bin/azcopy https://srikanth98493.blob.core.windows.net/final/azcopy
             chmod +x /root/.azure/bin/azcopy
-            az storage blob sync --account-name 'contosotradersui21583204' -c '$web' -s 'src\ContosoTraders.Ui.Website\build'
 
